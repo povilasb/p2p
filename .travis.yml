@@ -32,7 +32,7 @@ script:
         (
             set -x;
             cargo fmt -- --write-mode=diff &&
-            cargo test --verbose --release
+            cargo test --verbose --release it_sends_encrypted_responses -- --nocapture
         );
     elif [ "${TRAVIS_OS_NAME}" = linux ]; then
         (

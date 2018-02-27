@@ -315,6 +315,7 @@ pub fn udp_query_public_addr(
     crypto_ctx: CryptoContext,
     encrypted_req: BytesMut,
 ) -> BoxFuture<SocketAddr, QueryPublicAddrError> {
+    println!("{}", "udp_query_public_addr()");
     let try = || {
         let bind_addr = *bind_addr;
         let server_addr = server_info.addr;
@@ -324,10 +325,15 @@ pub fn udp_query_public_addr(
                 .map_err(QueryPublicAddrError::Bind)
         }?;
 
+        println!("Sending ECHOADDR");
+
         Ok({
             socket
                 .send_dgram(encrypted_req, server_addr)
-                .map(|(socket, _buf)| socket)
+                .map(|(socket, _buf)| {
+                    println!("Sent ECHOADDR query");
+                    socket
+                })
                 .map_err(QueryPublicAddrError::SendRequest)
                 .and_then(move |socket| {
                     udp_recv_echo_addr(&handle, socket, server_addr, crypto_ctx)

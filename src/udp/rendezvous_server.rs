@@ -237,6 +237,7 @@ mod test {
             );
 
             let res = evloop.run(query);
+            println!("task result: {:?}", res);
             let decrypt_error = match res {
                 Err(e) => {
                     match e {
