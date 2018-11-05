@@ -2,10 +2,10 @@ extern crate maidsafe_utilities;
 extern crate mio;
 extern crate mio_extras;
 extern crate p2p;
-extern crate rust_sodium as sodium;
 extern crate serde_json;
 #[macro_use]
 extern crate unwrap;
+extern crate safe_crypto;
 
 use mio::Poll;
 use p2p::{

@@ -4,8 +4,8 @@ use mio::{Events, Poll, PollOpt, Ready, Token};
 use mio_extras::channel;
 use mio_extras::channel::Sender;
 use mio_extras::timer::{Timeout, Timer};
+use safe_crypto::{gen_encrypt_keypair, PublicEncryptKey, SecretEncryptKey};
 use serde_json;
-use sodium::crypto::box_;
 use std::any::Any;
 use std::cell::RefCell;
 use std::collections::hash_map::Entry;
@@ -21,8 +21,8 @@ pub struct StateMachine {
     pub timer: Timer<NatTimer>,
     pub token: usize,
     pub config: Config,
-    pub enc_pk: box_::PublicKey,
-    pub enc_sk: box_::SecretKey,
+    pub enc_pk: PublicEncryptKey,
+    pub enc_sk: SecretEncryptKey,
     pub tx: Sender<NatMsg>,
 }
 
@@ -83,11 +83,11 @@ impl Interface for StateMachine {
         &self.config
     }
 
-    fn enc_pk(&self) -> &box_::PublicKey {
+    fn enc_pk(&self) -> &PublicEncryptKey {
         &self.enc_pk
     }
 
-    fn enc_sk(&self) -> &box_::SecretKey {
+    fn enc_sk(&self) -> &SecretEncryptKey {
         &self.enc_sk
     }
 
@@ -113,7 +113,7 @@ pub fn spawn_event_loop(config: Config) -> EventLoop {
 
         let poll = unwrap!(Poll::new());
 
-        let (enc_pk, enc_sk) = box_::gen_keypair();
+        let (enc_pk, enc_sk) = gen_encrypt_keypair();
         let timer = Timer::default();
 
         unwrap!(poll.register(
